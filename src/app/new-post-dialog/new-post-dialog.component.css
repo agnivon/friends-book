@@ -1,0 +1,27 @@
+.new-post-dialog {
+    position: relative;
+}
+
+.mat-form-field {
+    width: 100%;
+}
+
+.photo-input {
+    display: none;
+}
+
+.photo-upload-progress {
+    width: 22%;
+}
+
+.cancel-upload {
+    cursor: pointer;
+}
+
+.post-upload-progress-bar {
+    position: absolute;
+    bottom: 0px;
+    /* margin-left: -25px;
+    margin-right: -25px; */
+}
+

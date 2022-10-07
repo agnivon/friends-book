@@ -1,0 +1,20 @@
+<div class="row g-3 post-list-container" *ngIf="users?.length; else loading">
+    <div *ngFor="let user of displayUsers" class="col-12">
+        <mat-card class="user-card pt-4">
+            <mat-card-title-group>
+                <mat-card-title>{{user.firstName + ' ' + user.lastName}}</mat-card-title>
+                <mat-card-subtitle>{{user.email}}</mat-card-subtitle>
+                <img mat-card-lg-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" class="rounded-circle border border-2">
+            </mat-card-title-group>
+            <!-- <mat-card-content>
+                Hello
+            </mat-card-content> -->
+            <mat-card-actions>
+                <button mat-button class="w-100">SEND FRIEND REQUEST</button>
+              </mat-card-actions>
+        </mat-card>
+    </div>
+</div>
+<ng-template #loading>
+    <mat-spinner class="mx-auto"></mat-spinner>
+</ng-template>

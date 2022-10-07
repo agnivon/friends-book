@@ -1,0 +1,24 @@
+<div class="row g-3 post-list-container" *ngIf="users?.length; else loading">
+    <div *ngFor="let dUser of displayUsers" class="col-12">
+        <mat-card class="user-card pt-4 placeholder-glow">
+            <mat-card-title-group>
+                <mat-card-title>{{dUser.firstName + ' ' + dUser.lastName}}</mat-card-title>
+                <mat-card-subtitle>{{dUser.email}}</mat-card-subtitle>
+                <img mat-card-lg-image [src]="dUser.photoUrl" class="rounded-circle border border-2 overflow-hidden"
+                    [appLoading]="!dUser.photoUrl">
+            </mat-card-title-group>
+            <!-- <mat-card-content>
+                Hello
+            </mat-card-content> -->
+            <mat-card-actions>
+                <button mat-button class="w-100" *ngIf="dUser.friendRequestStatus === 0">SEND FRIEND REQUEST</button>
+                <button mat-button class="w-100" *ngIf="dUser.friendRequestStatus === 1">FRIEND REQUEST SENT</button>
+                <button mat-button class="w-100" *ngIf="dUser.friendRequestStatus === 2">ACCEPT FRIEND REQUEST</button>
+                <button mat-button class="w-100" *ngIf="dUser.friendRequestStatus === 3">FRIENDS</button>
+            </mat-card-actions>
+        </mat-card>
+    </div>
+</div>
+<ng-template #loading>
+    <mat-spinner class="mx-auto"></mat-spinner>
+</ng-template>

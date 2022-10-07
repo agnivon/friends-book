@@ -1,0 +1,57 @@
+<mat-toolbar color="primary" class="navbar sticky-md-top placeholder-glow">
+    <div class="brand pb-1" style="cursor: pointer;">
+        <i class="fa fa-address-book fa-2x float-start" aria-hidden="true"></i>
+        <span class="d-inline-block fs-3 pt-1 ps-2">FriendsBook</span>
+    </div>
+    <span class="spacer"></span>
+    <div class="button-navlinks" [appLoading]="componentChanging">
+        <div class="navbar-buttons" *ngIf="!userAuthenticated; else protectedNav">
+            <button mat-button class="fs-5" routerLink="/register">
+                Register
+            </button>
+            <button mat-button class="fs-5" routerLink="/login">
+                Login
+            </button>
+        </div>
+        <ng-template class="navbar-buttons" #protectedNav>
+            <button mat-button class="fs-5" routerLink="/home">
+                Home
+            </button>
+            <button mat-button class="fs-5" routerLink="/network">
+                Network
+            </button>
+            <button mat-button class="fs-5" routerLink="/friends">
+                Friends
+            </button>
+            <button mat-button class="fs-5" routerLink="/settings">
+                Settings
+            </button>
+            <button mat-button class="fs-5" (click)="handleLogout()">
+                Logout
+            </button>
+        </ng-template>
+    </div>
+    <div class="menu-navlinks">
+        <div *ngIf="!userAuthenticated; else protectedMenuNav">
+            <button mat-icon-button [matMenuTriggerFor]="menu">
+                <mat-icon>menu</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+                <button mat-menu-item routerLink="/register">Register</button>
+                <button mat-menu-item routerLink="/login">Login</button>
+            </mat-menu>
+        </div>
+        <ng-template #protectedMenuNav>
+            <button mat-icon-button [matMenuTriggerFor]="menu">
+                <mat-icon>menu</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+                <button mat-menu-item routerLink="/home">Home</button>
+                <button mat-menu-item routerLink="/network">Network</button>
+                <button mat-menu-item routerLink="/friends">Friends</button>
+                <button mat-menu-item routerLink="/settings">Settings</button>
+                <button mat-menu-item (click)="auth.logoutUser()">Logout</button>
+            </mat-menu>
+        </ng-template>
+    </div>
+</mat-toolbar>

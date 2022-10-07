@@ -1,0 +1,32 @@
+{
+    "firstName": "Agnivo",
+    "lastName": "Neogi",
+    "email": "agnivon@gmail.com",
+    "dob": "1996-02-28T18:30:00.000Z",
+    "gender": "Male",
+    "password": "dundun"
+}
+{
+    "firstName": "Bud",
+    "lastName": "Bud",
+    "email": "budbud@gmail.com",
+    "dob": "21st Sep 2022",
+    "gender": "Male",
+    "password": "budbud"
+}
+{
+    "firstName": "Pud",
+    "lastName": "Pud",
+    "email": "pudpud@gmail.com",
+    "dob": "21st Sep 2022",
+    "gender": "Male",
+    "password": "pudpud"
+}
+{
+    "firstName": "Bun",
+    "lastName": "Bun",
+    "email": "bunbun@gmail.com",
+    "dob": "?",
+    "gender": "Female",
+    "password": "bunbun"
+}
