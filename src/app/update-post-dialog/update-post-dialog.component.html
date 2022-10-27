@@ -1,0 +1,43 @@
+<div class="update-post-dialog">
+    <h1 mat-dialog-title>Update Post</h1>
+    <div mat-dialog-content>
+        <div>
+            <form [formGroup]="updatePostForm" id="updatePostForm" (ngSubmit)="handleFormSubmit()">
+                <mat-form-field appearance="outline">
+                    <mat-label>Username</mat-label>
+                    <input matInput formControlName="username">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Profession</mat-label>
+                    <input matInput formControlName="profession">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>What do you want to post about?</mat-label>
+                    <textarea matInput formControlName="post"></textarea>
+                </mat-form-field>
+            </form>
+            <div class="photo-upload mb-2">
+                <input type="file" class="photo-input" (change)="handlePhotoUpload($event)" #photoUpload>
+                {{postImageId || "No photo uploaded yet."}}
+                <button mat-mini-fab color="primary" class="upload-btn" (click)="photoUpload.click()">
+                    <mat-icon>attach_file</mat-icon>
+                </button>
+            </div>
+            <div class="photo-upload-progress">
+                <mat-progress-bar class="photo-upload-progress-bar" mode="determinate" [value]="photoUploadProgress"
+                    *ngIf="photoUploadProgress">
+                </mat-progress-bar>
+                <mat-icon class="cancel-upload mt-2" (click)="cancelPhotoUpload()" *ngIf="photoUploadProgress">
+                    delete_forever
+                </mat-icon>
+            </div>
+        </div>
+    </div>
+    <div mat-dialog-actions>
+        <button mat-button (click)="onNoClick()">CANCEL</button>
+        <button mat-button form="updatePostForm" cdkFocusInitial>POST</button>
+    </div>
+    <div *ngIf="postUploadPending">
+        <mat-progress-bar mode="indeterminate" class="post-upload-progress-bar"></mat-progress-bar>
+    </div>
+</div>

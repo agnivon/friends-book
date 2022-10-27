@@ -10,8 +10,15 @@
     display: none;
 }
 
+.photo-upload {
+    width: 25%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .photo-upload-progress {
-    width: 22%;
+    width: 24%;
 }
 
 .cancel-upload {

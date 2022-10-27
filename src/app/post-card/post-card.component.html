@@ -1,8 +1,8 @@
 <mat-card class="d-flex flex-column placeholder-glow" *ngIf="post">
     <mat-card-header>
         <div mat-card-avatar>
-            <img height="40" width="40" [src]="post.userPhotoUrl || getPlaceholder(40)"
-                [appLoading]="post.userPhotoId && !post.userPhotoUrl">
+            <img height="40" width="40" [src]="(post.userPhotoUrl | async ) || getPlaceholder(40)"
+                [appLoading]="post.userPhotoId !== '' && (post.userPhotoUrl | async )">
         </div>
         <mat-card-title [appLoading]="!post.userName">
             {{post.userName}}
@@ -11,17 +11,21 @@
             <span class="badge rounded-pill user-badge text-light">{{post.isAdmin ? 'Admin' : 'User' }}</span>
         </mat-card-subtitle>
         <div style="flex: 1 1 auto;"></div>
-        <button mat-icon-button [matMenuTriggerFor]="menu" class="float-end">
+        <button mat-icon-button [matMenuTriggerFor]="menu" class="float-end" *ngIf="(user$ | async)?._id === post.userId">
             <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="handleUpdatePost(post.id)">
+                <mat-icon>post_add</mat-icon>
+                <span>Update Post</span>
+            </button>
             <button mat-menu-item (click)="handleDeletePost(post.id)">
                 <mat-icon>delete</mat-icon>
                 <span>Delete Post</span>
             </button>
         </mat-menu>
     </mat-card-header>
-    <img mat-card-image [src]="post.postImageUrl" [appLoading]="!post.postImageUrl" *ngIf="post.postImageId">
+    <img mat-card-image [src]="(post.postImageUrl | async)" [appLoading]="post.postImageId !== '' && (post.postImageUrl | async)" *ngIf="post.postImageId">
     <mat-card-content class="flex-grow-1">
         <p>{{post.post}}</p>
     </mat-card-content>

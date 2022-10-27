@@ -47,7 +47,7 @@ export class NetworkPageComponent implements OnInit {
   }
 
   getUserPosts() {
-    this.postService.getPostsByUserId(this.user?.id).subscribe((posts: Post[] | null) => {
+    this.postService.getPostsByUserId(this.user!.id).subscribe((posts: Post[] | null) => {
       if (posts) {
         this.userPosts = posts;
       }

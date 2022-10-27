@@ -9,6 +9,7 @@ import { PostCardComponent } from '../post-card/post-card.component';
 import { NetworkPageComponent } from '../network-page/network-page.component';
 import { FriendsListComponent } from '../friends-list/friends-list.component';
 import { UserListComponent } from '../user-list/user-list.component';
+import { UpdatePostDialogComponent } from '../update-post-dialog/update-post-dialog.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { UserListComponent } from '../user-list/user-list.component';
     PostCardComponent,
     NetworkPageComponent,
     FriendsListComponent,
-    UserListComponent
+    UserListComponent,
+    UpdatePostDialogComponent
   ],
   imports: [
     CommonModule,

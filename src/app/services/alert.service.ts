@@ -11,7 +11,8 @@ export class AlertService {
 
   snackbarClasses = {
     success: 'snackbar-success',
-    failure: 'snackbar-failure'
+    failure: 'snackbar-failure',
+    info: 'snackbar-info'
   }
 
   createAlert(message: string, type: AlertMessageType = 'success') {

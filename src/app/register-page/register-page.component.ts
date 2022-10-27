@@ -3,6 +3,7 @@ import { FormBuilder, FormControl, FormGroupDirective, NgForm, Validators } from
 import { DateAdapter, ErrorStateMatcher, MAT_DATE_FORMATS, MAT_DATE_LOCALE, NativeDateAdapter } from '@angular/material/core';
 import { confirmPasswordMatchValidator } from '../directives/confirm-password-match.directive';
 import { UserLoginCredentials, UserRegistrationData } from '../models/auth.model';
+import { AlertService } from '../services/alert.service';
 import { AuthService } from '../services/auth.service';
 
 export class ConfirmPasswordErrorMatcher implements ErrorStateMatcher {
@@ -51,7 +52,7 @@ export class RegisterPageComponent implements OnInit {
 
   errorMatcher = new ConfirmPasswordErrorMatcher();
 
-  constructor(private fb: FormBuilder, private auth: AuthService) { }
+  constructor(private fb: FormBuilder, private auth: AuthService, private alertService: AlertService) { }
 
   ngOnInit(): void {
   }
@@ -67,7 +68,12 @@ export class RegisterPageComponent implements OnInit {
         dob: formValue.dob!,
         gender: formValue.gender!,
         password: formValue.password!
-      }).subscribe(() => this.registerResponsePending = false);
+      }).subscribe((response) => {
+        this.registerResponsePending = false;
+        if (response) {
+          this.alertService.createAlert(response.message);
+        }
+      });
     }
   }
 

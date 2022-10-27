@@ -19,7 +19,7 @@ export class FileService {
   handleError(observable: Observable<any>) {
     return observable.pipe(catchError((err: HttpErrorResponse) => {
       this.alertService.createErrorAlert(err.message);
-      if(err.status === 401) {
+      if (err.status === 401) {
         this.router.navigate(['/login']);
       }
       return of(null);
@@ -37,20 +37,21 @@ export class FileService {
     return of(null);
   }
 
-  getFileById(fileId: string | null | undefined): Observable<SafeUrl | null> {
-    if (fileId) {
-      if (fileId in this.fetchedFiles) {
-        const file = this.fetchedFiles[fileId];
-        return of(this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(file)));
-      } else {
-        const url = `${this.baseApiUrl}/files/${fileId}`;
-        return this.handleError(this.http.get(url, { responseType: 'blob' })).pipe(map((file: Blob) => {
-          this.fetchedFiles[fileId] = file;
-          return this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(file));
-        }));
-      }
+  /* getFileById(fileId: string): Observable<SafeUrl> {
+    if (fileId in this.fetchedFiles) {
+      const file = this.fetchedFiles[fileId];
+      return of(this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(file)));
+    } else {
+      const url = `${this.baseApiUrl}/files/${fileId}`;
+      return this.http.get(url, { responseType: 'blob' }).pipe(map((file: Blob) => {
+        this.fetchedFiles[fileId] = file;
+        return this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(file));
+      }));
     }
-    return of(null);
-  }
+  } */
 
+  getFileById(fileId: string): Observable<Blob> {
+      const url = `${this.baseApiUrl}/files/${fileId}`;
+      return this.http.get(url, { responseType: 'blob' });
+  }
 }

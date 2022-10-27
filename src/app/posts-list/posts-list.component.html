@@ -1,6 +1,6 @@
 <div class="row g-3 post-list-container" *ngIf="displayPosts?.length; else loading">
     <div *ngFor="let post of displayPosts" class="col-12">
-        <app-post-card [post]="post" (postsUpdated)="handlePostsUpdated()"></app-post-card>
+        <app-post-card [post]="post"></app-post-card>
     </div>
 </div>
 <ng-template #loading>

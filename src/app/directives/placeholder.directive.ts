@@ -5,13 +5,17 @@ import { Directive, ElementRef, Input } from '@angular/core';
 })
 export class PlaceholderDirective {
 
-  @Input() appLoading: boolean | string = false;
+  @Input() appLoading: any = false;
 
-  constructor(private el: ElementRef) { 
+  constructor(private el: ElementRef) {
   }
 
   ngOnChanges() {
-    if(this.appLoading) {
+    // console.log(this.el, this.appLoading);
+    if (this.appLoading === '' ||
+      this.appLoading === null ||
+      this.appLoading === undefined ||
+      this.appLoading === true) {
       this.el.nativeElement.classList.add('placeholder');
     } else {
       this.el.nativeElement.classList.remove('placeholder');

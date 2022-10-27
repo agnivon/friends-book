@@ -20,14 +20,14 @@ import { PlaceholderDirective } from '../directives/placeholder.directive';
     CommonModule,
     MaterialModule,
     AppRoutingModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   exports: [
     MaterialModule,
     AppRoutingModule,
     ReactiveFormsModule,
     HttpClientModule,
-    PlaceholderDirective
+    PlaceholderDirective,
   ],
   providers: [
     AuthService,

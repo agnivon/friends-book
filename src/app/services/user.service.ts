@@ -24,9 +24,9 @@ export class UserService {
     }));
   }
 
-  getUsers(): Observable<User[] | null> {
+  getUsers(): Observable<User[]> {
     const url = `${this.baseApiUrl}/users`;
-    return this.handleError(this.http.get<User[]>(url));
+    return this.http.get<User[]>(url);
   }
 
   getUserById(userId: string | null | undefined): Observable<User | null> {
@@ -53,7 +53,7 @@ export class UserService {
     }));
   }
 
-  createFriendRequest(userId: string | null, friendId: string | null) {
+  createFriendRequest(userId: string | null | undefined, friendId: string | null) {
     if(userId && friendId) {
       const url = `${this.baseApiUrl}/friends/createrequest`;
       const body = {
@@ -66,7 +66,7 @@ export class UserService {
     return of(null);
   }
 
-  updateFriendRequestById(requestId: string | null, userId: string | null, friendId: string | null) {
+  updateFriendRequestById(requestId: string | null, userId: string | null | undefined, friendId: string | null) {
     if(requestId && userId && friendId) {
       const url = `${this.baseApiUrl}/friends/${requestId}`;
       const body = {
@@ -81,7 +81,7 @@ export class UserService {
 
   getFriendRequests() {
     const url = `${this.baseApiUrl}/friends`;
-    return this.handleError(this.http.get<FriendRequest[]>(url));
+    return this.http.get<FriendRequest[]>(url);
   }
 
   getFriendRequestById(requestId: string | null) {

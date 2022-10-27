@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, catchError, of } from 'rxjs';
-import { NewPost, Post } from '../models/post.model';
+import { NewPost, Post, UpdatedPost } from '../models/post.model';
 import { AlertService } from './alert.service';
 
 @Injectable({
@@ -17,7 +17,7 @@ export class PostService {
   handleError(observable: Observable<any>) {
     return observable.pipe(catchError((err: HttpErrorResponse) => {
       this.alertService.createErrorAlert(err.message);
-      if(err.status === 401) {
+      if (err.status === 401) {
         this.router.navigate(['/login']);
       }
       return of(null);
@@ -26,52 +26,45 @@ export class PostService {
 
   createPost(post: NewPost) {
     const url = `${this.baseApiUrl}/posts/createpost`;
-    return this.handleError(this.http.post<{ message: string }>(url, post));
+    return this.http.post<{ message: string }>(url, post);
   }
 
-  getPostById(postId: string | null) {
-    if (postId) {
-      const url = `${this.baseApiUrl}/posts/${postId}`;
-      return this.handleError(this.http.get<Post>(url));
-    }
-    return of(null);
+  getPostById(postId: string) {
+    const url = `${this.baseApiUrl}/posts/${postId}`;
+    return this.http.get<Post>(url);
   }
 
   getPosts() {
     const url = `${this.baseApiUrl}/posts`;
-    return this.handleError(this.http.get<Post[]>(url));
+    return this.http.get<Post[]>(url);
   }
 
-  getPostsByUserId(userId: string | null | undefined) {
+  getPostsByUserId(userId: string) {
+    const url = `${this.baseApiUrl}/posts/findpostbyuserid`;
+    return this.http.post<Post[]>(url, { id: userId });
+  }
+
+  /* getPostsByUserId(userId: string | null | undefined) {
     if (userId) {
       const url = `${this.baseApiUrl}/posts/findpostbyuserid`;
       return this.handleError(this.http.post<Post[]>(url, { id: userId }));
     }
     return of(null);
+  } */
+
+  updateManyPostsByUserId(userId: string, body: object) {
+    const url = `${this.baseApiUrl}/posts/updatemanyposts`;
+    return this.http.post<object>(url, body);
   }
 
-  updateManyPostsByUserId(userId: string | null, body: object) {
-    if(userId) {
-      const url = `${this.baseApiUrl}/posts/updatemanyposts`;
-      return this.handleError(this.http.post<object>(url, body));
-    }
-    return of(null);
-  }
-
-  updatePostById(postId: string | null, post: Post) {
-    if (postId) {
-      const url = `${this.baseApiUrl}/posts/${postId}`;
-      return this.handleError(this.http.put<any>(url, post));
-    }
-    return of(null);
+  updatePostById(postId: string, post: UpdatedPost) {
+    const url = `${this.baseApiUrl}/posts/${postId}`;
+    return this.http.put<any>(url, post);
   }
 
   deletePostById(postId: string | null) {
-    if(postId) {
-      const url = `${this.baseApiUrl}/posts/${postId}`;
-      return this.handleError(this.http.delete<any>(url));
-    }
-    return of(null);
+    const url = `${this.baseApiUrl}/posts/${postId}`;
+    return this.http.delete<any>(url);
   }
 
 }

@@ -11,10 +11,10 @@
                 Hello
             </mat-card-content> -->
             <mat-card-actions>
-                <button mat-button class="w-100" *ngIf="dUser.friendRequestStatus === 0">SEND FRIEND REQUEST</button>
-                <button mat-button class="w-100" *ngIf="dUser.friendRequestStatus === 1">FRIEND REQUEST SENT</button>
-                <button mat-button class="w-100" *ngIf="dUser.friendRequestStatus === 2">ACCEPT FRIEND REQUEST</button>
-                <button mat-button class="w-100" *ngIf="dUser.friendRequestStatus === 3">FRIENDS</button>
+                <button mat-button class="w-100" *ngIf="dUser.friendRequestStatus === 0" (click)="handleSendFriendRequest(dUser.id)">SEND FRIEND REQUEST</button>
+                <button mat-button class="w-100" *ngIf="dUser.friendRequestStatus === 1" disabled>FRIEND REQUEST SENT</button>
+                <button mat-button class="w-100" *ngIf="dUser.friendRequestStatus === 2" (click)="handleAcceptFriendRequest(dUser.id)">ACCEPT FRIEND REQUEST</button>
+                <button mat-button class="w-100" *ngIf="dUser.friendRequestStatus === 3" disabled>FRIENDS</button>
             </mat-card-actions>
         </mat-card>
     </div>

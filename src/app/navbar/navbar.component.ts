@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationStart, ResolveStart, Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { AuthService } from '../services/auth.service';
+import { logoutUser } from '../state/auth/auth.actions';
+import { selectAuthUser } from '../state/auth/auth.selectors';
 
 @Component({
   selector: 'app-navbar',
@@ -12,19 +15,22 @@ export class NavbarComponent implements OnInit {
   userAuthenticated: boolean = false;
   componentChanging: boolean = true;
 
-  constructor(private router: Router, protected auth: AuthService) { }
+  constructor(private router: Router, protected auth: AuthService, private store: Store) { }
 
   checkIfAuthenticated() {
     this.componentChanging = true;
-    this.auth.getAuthStatus().subscribe((isAuthenticated) => {
+    /* this.auth.getAuthStatus().subscribe((isAuthenticated) => {
       this.userAuthenticated = isAuthenticated;
       this.componentChanging = false;
-    });
+    }); */
+    this.store.select(selectAuthUser).subscribe(authUser => {
+      this.userAuthenticated = authUser ? true : false;
+      this.componentChanging = false;
+    })
   }
 
   handleLogout() {
-    this.auth.logoutUser();
-    this.router.navigate(['/login']);
+    this.store.dispatch(logoutUser({}));
   }
 
   ngOnInit(): void {

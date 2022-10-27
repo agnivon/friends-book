@@ -1,12 +1,15 @@
-import { HttpEventType, HttpResponse } from '@angular/common/http';
+import { HttpEventType } from '@angular/common/http';
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
-import { User } from '../models/user.model';
+import { AuthUser } from '../models/auth.model';
 import { AlertService } from '../services/alert.service';
 import { FileService } from '../services/file.service';
 import { PostService } from '../services/post.service';
+import { selectAuthUser } from '../state/auth/auth.selectors';
+import { createPost } from '../state/post/post.actions';
 
 @Component({
   selector: 'app-new-post-dialog',
@@ -21,44 +24,67 @@ export class NewPostDialogComponent implements OnInit {
     post: ['', [Validators.required]]
   })
 
+  user$ = this.store.select(selectAuthUser);
+  user: AuthUser | undefined;
   postImageId: string | null = null;
   photoUploadSubscription: Subscription | null = null;
   photoUploadProgress: number = 0;
   postUploadPending: boolean = false;
 
   constructor(public dialogRef: MatDialogRef<NewPostDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { user: User }, private fb: FormBuilder, private postService: PostService, private fileService: FileService, private alertService: AlertService) { }
+    /* @Inject(MAT_DIALOG_DATA) public data: { user$: Observable<AuthUser | null> }, */ private fb: FormBuilder, private postService: PostService, private fileService: FileService, private alertService: AlertService, private store: Store) { }
 
   ngOnInit(): void {
+    this.user$.subscribe(authUser => { if (authUser) this.user = authUser });
   }
 
   onNoClick(): void {
     this.dialogRef.close();
   }
 
-  handleFormSubmit() {
+  /* handleFormSubmit() {
     if (this.newPostForm.valid) {
       const formValue = this.newPostForm.value;
-      const user = this.data.user;
+      const user = this.user;
       this.postUploadPending = true;
       this.postService.createPost({
         post: formValue.post!,
-        userId: user._id,
+        userId: this.user!._id,
         userName: formValue.username!,
-        userPhotoId: user.photoId,
+        userPhotoId: this.user!.photoId,
         postImageId: this.postImageId || "",
-        isAdmin: user.isAdmin,
+        isAdmin: this.user!.isAdmin,
         profession: formValue.profession!
       }).subscribe((response: { message: string } | null) => {
         if (response) {
           this.alertService.createAlert("Post successfully created");
           this.dialogRef.close(true)
         } else {
-          //this.alertService.createAlert("Post creation failed");
+          this.alertService.createAlert("Post creation failed");
           this.dialogRef.close(false)
         }
         this.postUploadPending = false;
       })
+    }
+  } */
+
+  handleFormSubmit() {
+    if (this.newPostForm.valid) {
+      const formValue = this.newPostForm.value;
+      const user = this.user;
+      this.postUploadPending = true;
+      const newPost = {
+        post: formValue.post!,
+        userId: this.user!._id,
+        userName: formValue.username!,
+        userPhotoId: this.user!.photoId,
+        postImageId: this.postImageId || "",
+        isAdmin: this.user!.isAdmin,
+        profession: formValue.profession!
+      };
+      this.store.dispatch(createPost({ newPost }));
+      this.postUploadPending = false;
+      this.dialogRef.close();
     }
   }
 
