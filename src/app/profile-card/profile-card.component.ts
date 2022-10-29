@@ -1,9 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { SafeUrl } from '@angular/platform-browser';
-import { AuthService } from '../services/auth.service';
 import { FileService } from '../services/file.service';
-import { UserService } from '../services/user.service';
-import { PostService } from '../services/post.service';
 import { Store } from '@ngrx/store';
 
 import * as FileActions from '../state/file/file.actions';
@@ -11,10 +8,12 @@ import * as AuthSelectors from '../state/auth/auth.selectors';
 import * as PostSelectors from '../state/post/post.selectors';
 import * as UserSelectors from '../state/user/user.selectors';
 import * as FileSelectors from '../state/file/file.selectors';
-import { FriendRequest, User } from '../models/user.model';
 import { AuthUser } from '../models/auth.model';
-import { Post } from '../models/post.model';
 import { Observable } from 'rxjs';
+import { getPosts, updateManyPostsByUserId } from '../state/post/post.actions';
+import { getFriendRequests, updateAuthUser, updateUserById } from '../state/user/user.actions';
+import { HttpEventType } from '@angular/common/http';
+import { AlertService } from '../services/alert.service';
 
 @Component({
   selector: 'app-profile-card',
@@ -23,57 +22,66 @@ import { Observable } from 'rxjs';
 })
 export class ProfileCardComponent implements OnInit {
 
-  /* @Input() user: User | AuthUser | undefined;
-  @Input() userPosts: Post[] | undefined;
-  @Input() friendRequests: FriendRequest[] | undefined = []; */
-
-  user$ = this.store.select(AuthSelectors.selectAuthUser);
+  authUser$ = this.store.select(AuthSelectors.selectAuthUser);
   userPosts$ = this.store.select(PostSelectors.selectUserPosts);
-  friendRequests$ = this.store.select(UserSelectors.selectAcceptedUserFriendRequests);
+  friendRequests$ = this.store.select(UserSelectors.selectAcceptedAuthUserFriendRequests);
   profilePhotoUrl$: Observable<SafeUrl> | undefined;
 
-  /* user: AuthUser | undefined;
-  friendRequests: FriendRequest[] = []; */
+  authUser: AuthUser | undefined;
 
-  /* profilePhotoUrl: string | SafeUrl | null | undefined;
-  connections: number | null | undefined = 0;
-  noOfUserPosts: number | null | undefined = 0; */
-
-  constructor(private userService: UserService, private auth: AuthService, private file: FileService, private postService: PostService, private store: Store) { }
+  constructor(private file: FileService, private store: Store, private alert: AlertService) { }
 
   getPlaceholder(dimensions: number) {
     return `https://via.placeholder.com/${dimensions}`;
   }
 
-  /* getProfilePhoto() {
-    this.file.getFileById(this.user!.photoId).subscribe((photoUrl: SafeUrl | null) => {
-      if (photoUrl) {
-        this.profilePhotoUrl = photoUrl;
-      }
-    });
+  handlePhotoUpload(event: any) {
+    const photo: File = event.target.files[0];
+    if (photo) {
+      const formData = new FormData();
+      formData.append("picture", photo);
+      const upload$ = this.file.uploadFile(formData).subscribe((event) => {
+        if (event.type == HttpEventType.Response) {
+          if (event.status == 200) {
+            this.alert.createAlert("Profile photo uploaded successfully");
+            const photoId: string = event.body.uploadId;
+            this.store.dispatch(updateAuthUser({
+              updatedUser: { photoId },
+              actionMessage: "Profile photo updated successfully"
+            }));
+            this.store.dispatch(updateManyPostsByUserId({
+              userId: this.authUser!._id,
+              photoId,
+            }));
+          }
+          else {
+            this.alert.createAlert("Upload failed", "failure");
+          }
+        }
+      })
+    }
+  }
+  /* if (event.status == 200) {
+    const photoId = event.body.uploadId;
+    this.store.dispatch(updateUserById({
+      userId: this.authUser!._id,
+      updatedUser: { photoId }
+    }));
+  }
+  else {
+    this.alert.createAlert("Upload failed", "failure");
   } */
 
   ngOnInit(): void {
-    this.user$.subscribe(user => {
-      if (user) {
-        this.store.dispatch(FileActions.getFileById({ fileId: user.photoId }));
-        this.profilePhotoUrl$ = this.store.select(FileSelectors.selectFileById(user.photoId));
+    this.authUser$.subscribe(authUser => {
+      if (authUser) {
+        this.authUser = authUser
+        this.store.dispatch(FileActions.getFileById({ fileId: authUser.photoId }));
+        this.profilePhotoUrl$ = this.store.select(FileSelectors.selectFileById(authUser.photoId));
         //this.getProfilePhoto();
       }
     });
-  }
-
-  ngOnChanges() {
-    /* this.connections = this.friendRequests?.filter(request => {
-      return request.userId === this.user?.id && !request.status.toLowerCase().includes('pending');
-    }).length || 0;
-
-    this.noOfUserPosts = this.userPosts?.length || 0;
-
-    this.file.getFileById(this.user?.photoId).subscribe((photoUrl: SafeUrl | null) => {
-      if (photoUrl) {
-        this.profilePhotoUrl = photoUrl;
-      }
-    }); */
+    this.store.dispatch(getPosts());
+    this.store.dispatch(getFriendRequests());
   }
 }

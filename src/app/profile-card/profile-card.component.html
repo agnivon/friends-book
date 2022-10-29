@@ -3,36 +3,33 @@
     <!-- <mat-card-subtitle>{{user?.email}}</mat-card-subtitle> -->
     <mat-card-content>
       <div class="text-center py-2">
-        <img
-          [src]="(profilePhotoUrl$ | async) || getPlaceholder(150)"
-          width="150"
-          height="150"
-          class="img-fluid m-3 rounded-circle border border-2 profile-photo"
-          [appLoading]="(profilePhotoUrl$ | async)"
-        />
-        <div class="h4" [appLoading]="(user$ | async)">
-          {{ (user$ | async)?.firstName }} {{ (user$ | async)?.lastName }}
+        <div class="profile-photo-container">
+          <div class="position-absolute rounded-circle upload-profile-photo" (click)="photoUpload.click()">
+            <input type="file" class="photo-input" (change)="handlePhotoUpload($event)" #photoUpload>
+            <mat-icon class="me-1">photo_camera</mat-icon>Change Image
+          </div>
+          <img [src]="(profilePhotoUrl$ | async) || getPlaceholder(150)" width="150" height="150"
+            class="img-fluid rounded-circle border border-2 m-3 profile-photo"
+            [appLoading]="profilePhotoUrl$ | async" />
+        </div>
+        <div class="h4" [appLoading]="authUser$ | async">
+          {{ (authUser$ | async)?.firstName }}
+          {{ (authUser$ | async)?.lastName }}
         </div>
       </div>
       <mat-divider></mat-divider>
       <mat-list class="text-center">
         <mat-list-item>
           <mat-icon matListIcon class="me-2">person</mat-icon>
-          <span
-            class="badge rounded-pill text-bg-light me-2"
-            [appLoading]="(friendRequests$ | async)"
-            >{{ (friendRequests$ | async)?.length }}</span
-          >
+          <span class="badge rounded-pill text-bg-light me-2" [appLoading]="friendRequests$ | async">{{ (friendRequests$
+            | async)?.length }}</span>
           Connections
         </mat-list-item>
         <mat-divider></mat-divider>
         <mat-list-item>
           <mat-icon matListIcon class="me-2">article</mat-icon>
-          <span
-            class="badge rounded-pill text-bg-light me-2"
-            [appLoading]="(userPosts$ | async)"
-            >{{ (userPosts$ | async)?.length }}</span
-          >
+          <span class="badge rounded-pill text-bg-light me-2" [appLoading]="userPosts$ | async">{{ (userPosts$ |
+            async)?.length }}</span>
           Posts
         </mat-list-item>
       </mat-list>

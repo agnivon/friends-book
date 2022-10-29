@@ -4,15 +4,14 @@ import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { Store } from '@ngrx/store';
 import { EMPTY, of } from 'rxjs';
-import { map, mergeMap, catchError, exhaustMap } from 'rxjs/operators';
+import { map, mergeMap, catchError, exhaustMap, take } from 'rxjs/operators';
 import { AuthUser } from 'src/app/models/auth.model';
 import { AlertService } from 'src/app/services/alert.service';
 import { Auth2Service } from 'src/app/services/auth2.service';
 
 import * as AuthActions from './auth.actions';
-import * as AuthSelectors from './auth.selectors';
-import { noAction } from '../no.actions';
 import { makeAction } from '../custom.action';
+import { selectAuthSlice } from './auth.selectors';
 
 @Injectable()
 export class AuthEffects {
@@ -39,14 +38,19 @@ export class AuthEffects {
         exhaustMap(action => this.auth.authenticateUser(action.userLoginCredentials)
             .pipe(
                 map((authUser) => {
-                    this.setAuthDataInLS(authUser, authUser.token);
-                    this.alertService.createAlert(`${authUser.firstName} ${authUser.lastName}:${authUser.email} ${authUser._id} successfully logged in`);
-                    this.router.navigate(['/home']);
-                    return AuthActions.storeAuthUser({
-                        authUser,
-                        authToken: authUser.token,
-                        lastAuthTime: Date.now()
-                    })
+                    if (authUser.isActive) {
+                        this.setAuthDataInLS(authUser, authUser.token);
+                        this.alertService.createAlert(`${authUser.firstName} ${authUser.lastName}:${authUser.email} ${authUser._id} successfully logged in`);
+                        this.router.navigate(['/home']);
+                        return AuthActions.storeAuthUser({
+                            authUser,
+                            authToken: authUser.token,
+                            lastAuthTime: Date.now()
+                        })
+                    } else {
+                        this.alertService.createAlert("You are blocked from accessing this platform.", "failure");
+                        return makeAction('[Auth] User is blocked');
+                    }
                 }),
                 catchError((err) => this.handleError(err))
             ))
@@ -122,6 +126,18 @@ export class AuthEffects {
             }
         })
     ));
+
+    updateStoredAuthUser$ = createEffect(() => this.actions$.pipe(
+        ofType(AuthActions.updateStoredAuthUser),
+        mergeMap(() => this.store.select(selectAuthSlice).pipe(
+            take(1),
+            map(authSlice => {
+                this.setAuthDataInLS(authSlice.authUser!, authSlice.authToken!);
+                return makeAction("Stored LS Auth Data updated")
+            })
+        )),
+        catchError((err) => this.handleError(err))
+    ))
 
     getAuthDataFromLS(): [AuthUser | null, string | null] {
         const lsAuthUser = localStorage.getItem('authUser');

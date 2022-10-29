@@ -1,12 +1,20 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { SafeUrl } from '@angular/platform-browser';
+import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
+import { AuthUser } from '../models/auth.model';
 import { DisplayUser, FriendIdRequestMap, FriendRequest, User } from '../models/user.model';
 import { AlertService } from '../services/alert.service';
 import { FileService } from '../services/file.service';
 import { ListService } from '../services/list.service';
 import { UserService } from '../services/user.service';
+import { selectAuthUser } from '../state/auth/auth.selectors';
+import { getFileById } from '../state/file/file.actions';
+import { selectFileById } from '../state/file/file.selectors';
+import { createFriendRequest, updateFriendRequestById, updateUserById } from '../state/user/user.actions';
+import { selectFriendRequests, selectUsers } from '../state/user/user.selectors';
 
-import { listenToScrollEnd, unSubToScrollEnd } from '../utils';
+import { arraySlice, bodyScrollEndEvent, listenToScrollEnd, paginatedListGenerator, unSubToScrollEnd } from '../utils';
 
 @Component({
   selector: 'app-user-list',
@@ -15,55 +23,49 @@ import { listenToScrollEnd, unSubToScrollEnd } from '../utils';
 })
 export class UserListComponent implements OnInit {
 
-  @Input() user: User | null | undefined;
-  @Input() users: User[] | null | undefined;
-  @Input() friendRequests: FriendRequest[] | null | undefined;
+  authUser$ = this.store.select(selectAuthUser);
+  friendRequests$ = this.store.select(selectFriendRequests);
+  users$ = this.store.select(selectUsers);
+
+  authUser: AuthUser | undefined;
+  //users: User[] = [];
+  friendRequests: FriendRequest[] = [];
   friendIdRequestMap: FriendIdRequestMap = {};
-  displayUsers: DisplayUser[] | null | undefined = [];
+  userListGenerator: Generator<User[], void, unknown> | undefined;
+  displayUsers: DisplayUser[] = [];
 
-  sliceSize = 20;
-  slicePointer = this.sliceSize;
-  scrollEndHandler: Function | undefined;
-  displayUsersUpdating = false;
+  scrollEndSubscription: Subscription | undefined;
+  //displayUsersUpdating = false;
 
-  constructor(private fileService: FileService, private userService: UserService, private alertService: AlertService, private listService: ListService) { }
+  constructor(private fileService: FileService, private userService: UserService, private alertService: AlertService, private listService: ListService, private store: Store) { }
 
   fetchUserImages(user: DisplayUser) {
-    this.fileService.getFileById(user.photoId).subscribe((imageUrl: SafeUrl | null) => {
-      if (imageUrl) {
-        user.photoUrl = imageUrl;
-      }
-    });
+    const { photoId } = user;
+    if (photoId) {
+      this.store.dispatch(getFileById({ fileId: user.photoId }));
+      user.photoUrl = this.store.select(selectFileById(photoId));
+    }
   }
 
-  userComparator(user1: DisplayUser, user2: DisplayUser) {
-    const user1CreatedDate = Date.parse(user1.createdDate);
-    const user2CreatedDate = Date.parse(user2.createdDate);
-    return user1CreatedDate > user2CreatedDate ? -1 : 1;
+  fetchAllUserImages() {
+    this.displayUsers.forEach(user => {
+      this.fetchUserImages(user);
+    })
   }
 
-  setDisplayUsers() {
-    if (this.users) {
-      this.displayUsersUpdating = true;
-
-      const sliceStart = this.users.length - this.slicePointer;
-      const sliceEnd = sliceStart + this.sliceSize;
-      const userSlice = this.users.slice(sliceStart, sliceEnd);
-
-      userSlice.sort(this.userComparator);
-      userSlice.forEach(user => {
-        this.fetchUserImages(user);
-        this.setFriendRequestStatus(user);
-      });
-      
-      this.displayUsers = this.displayUsers?.concat(userSlice.filter(user => user.id != this.user?.id));
-      this.displayUsersUpdating = false;
+  setDisplayUsers(nextPage = true) {
+    let newUsers = this.userListGenerator?.next().value;
+    if (newUsers) {
+      this.displayUsers = this.displayUsers.concat(newUsers);
+      this.fetchAllUserImages();
+      this.updateFriendRequestStatuses();
+      //console.log(this.displayUsers);
     }
   }
 
   setFriendIdMap() {
     this.friendRequests?.forEach(request => {
-      const userId = this.user?.id
+      const userId = this.authUser?._id
       if (userId === request.userId) {
         this.friendIdRequestMap[request.friendId] = request;
       } else if (userId === request.friendId) {
@@ -75,7 +77,7 @@ export class UserListComponent implements OnInit {
   }
 
   getFriendRequestStatus(friendId: string): 0 | 1 | 2 | 3 {
-    const userId = this.user?.id;
+    const userId = this.authUser?._id;
     if (userId && friendId) {
       if (friendId in this.friendIdRequestMap) {
         const request = this.friendIdRequestMap[friendId];
@@ -97,49 +99,45 @@ export class UserListComponent implements OnInit {
     user.friendRequestStatus = this.getFriendRequestStatus(user.id);
   }
 
+  updateFriendRequestStatuses() {
+    this.displayUsers.forEach(user => this.setFriendRequestStatus(user));
+  }
+
   handleSendFriendRequest(friendId: string) {
-    this.userService.createFriendRequest(this.user?.id, friendId)
-      .subscribe(response => {
-        if (response) {
-          this.alertService.createAlert("Friend Request sent successfully");
-        } else {
-          this.alertService.createAlert("Error sending friend request");
-        }
-      });
+    this.store.dispatch(createFriendRequest({ userId: this.authUser!._id, friendId }));
   }
 
   handleAcceptFriendRequest(friendId: string) {
     const requestId = this.friendIdRequestMap[friendId].id;
-    this.userService.updateFriendRequestById(requestId, this.user?.id, friendId)
-      .subscribe(response => {
-        if (response) {
-          this.alertService.createAlert("You are now friends");
-        } else {
-          this.alertService.createAlert("Error accepting friend request");
-        }
-      })
+    this.store.dispatch(updateFriendRequestById({ userId: this.authUser!._id, friendId, requestId }));
   }
 
-  handleScrollEnd() {
-    if (!this.displayUsersUpdating) {
-      this.slicePointer += 20;
-      this.setDisplayUsers();
-    }
+  handleUpdateUserStatus(userId: string, blocked: boolean) {
+    this.store.dispatch(updateUserById({ userId, updatedUser: { isActive: !blocked } }));
   }
 
   ngOnInit(): void {
-    this.scrollEndHandler = listenToScrollEnd(() => {
-      this.handleScrollEnd();
-    })
+    this.scrollEndSubscription = bodyScrollEndEvent.subscribe((scrollEnd) => {
+      if(scrollEnd) this.setDisplayUsers();
+    });
+    this.authUser$.subscribe(authUser => {
+      if (authUser) {
+        this.authUser = authUser;
+      }
+    });
+    this.friendRequests$.subscribe(friendRequests => {
+      this.friendRequests = friendRequests;
+      this.setFriendIdMap();
+      this.updateFriendRequestStatuses();
+    });
+    this.users$.subscribe(users => {
+      this.userListGenerator = paginatedListGenerator<User>(users, 20, this.displayUsers.length);
+      this.displayUsers = [];
+      this.setDisplayUsers();
+    });
   }
 
   ngOnDestroy(): void {
-    unSubToScrollEnd(this.scrollEndHandler);
+    this.scrollEndSubscription?.unsubscribe();
   }
-
-  ngOnChanges() {
-    this.setFriendIdMap();
-    this.setDisplayUsers();
-  }
-
 }

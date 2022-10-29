@@ -1,7 +1,9 @@
 import { createReducer, on } from '@ngrx/store';
 
-import { storeAuthUser, deleteAuthUser, setLastAuthTime } from './auth.actions';
+import { storeAuthUser, deleteAuthUser, setLastAuthTime, updateStoredAuthUser } from './auth.actions';
 import { AuthUser } from 'src/app/models/auth.model';
+import { updateAuthUser } from '../user/user.actions';
+import { state } from '@angular/animations';
 
 export type AuthState = {
     authUser: AuthUser | null
@@ -17,7 +19,13 @@ export const initialState: AuthState = {
 
 export const authReducer = createReducer(
     initialState,
-    on(storeAuthUser, (state, { authUser, authToken, lastAuthTime = null }) => ({ authUser, authToken, lastAuthTime })),
+    on(storeAuthUser, (state, { authUser, authToken = state.authToken, lastAuthTime = state.lastAuthTime }) => ({ authUser, authToken, lastAuthTime })),
+    on(updateStoredAuthUser, (state, { updatedAuthUser }) => ({
+        ...state, authUser: {
+            ...state.authUser!,
+            ...updatedAuthUser
+        }
+    })),
     on(setLastAuthTime, (state) => ({ ...state, lastAuthTime: Date.now() })),
     on(deleteAuthUser, (state) => ({ authUser: null, authToken: null, lastAuthTime: null }))
 );

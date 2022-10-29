@@ -10,6 +10,11 @@ import { NetworkPageComponent } from '../network-page/network-page.component';
 import { FriendsListComponent } from '../friends-list/friends-list.component';
 import { UserListComponent } from '../user-list/user-list.component';
 import { UpdatePostDialogComponent } from '../update-post-dialog/update-post-dialog.component';
+import { FriendsPageComponent } from '../friends-page/friends-page.component';
+import { SettingsPageComponent } from '../settings-page/settings-page.component';
+import { AdminPageComponent } from '../admin-page/admin-page.component';
+import { UserBadgesComponent } from '../user-badges/user-badges.component';
+import { VisiblePostsPipe } from '../pipes/visibleposts.pipe';
 
 @NgModule({
   declarations: [
@@ -22,7 +27,12 @@ import { UpdatePostDialogComponent } from '../update-post-dialog/update-post-dia
     NetworkPageComponent,
     FriendsListComponent,
     UserListComponent,
-    UpdatePostDialogComponent
+    UpdatePostDialogComponent,
+    FriendsPageComponent,
+    SettingsPageComponent,
+    AdminPageComponent,
+    UserBadgesComponent,
+    VisiblePostsPipe
   ],
   imports: [
     CommonModule,

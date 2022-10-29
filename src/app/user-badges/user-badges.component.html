@@ -1,0 +1,3 @@
+<span class="badge rounded-pill role-badge text-light" *ngIf="isAdmin === true || isAdmin === false">{{isAdmin ? 'Admin' : 'User' }}</span>
+<span class="badge rounded-pill friend-badge text-light" *ngIf="isFriend === true">Friends</span>
+<span class="badge rounded-pill status-badge text-light" *ngIf="isActive === false">Blocked</span>

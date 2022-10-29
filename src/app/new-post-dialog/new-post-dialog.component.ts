@@ -84,7 +84,7 @@ export class NewPostDialogComponent implements OnInit {
       };
       this.store.dispatch(createPost({ newPost }));
       this.postUploadPending = false;
-      this.dialogRef.close();
+      this.dialogRef.close(true);
     }
   }
 

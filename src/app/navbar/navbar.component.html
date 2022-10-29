@@ -4,8 +4,8 @@
         <span class="d-inline-block fs-3 pt-1 ps-2">FriendsBook</span>
     </div>
     <span class="spacer"></span>
-    <div class="button-navlinks" [appLoading]="componentChanging">
-        <div class="navbar-buttons" *ngIf="!userAuthenticated; else protectedNav">
+    <div class="button-navlinks" >
+        <div class="navbar-buttons" *ngIf="!(authUser$ | async); else protectedNav">
             <button mat-button class="fs-5" routerLink="/register">
                 Register
             </button>
@@ -26,13 +26,16 @@
             <button mat-button class="fs-5" routerLink="/settings">
                 Settings
             </button>
+            <button mat-button class="fs-5" routerLink="/admin" *ngIf="(authUser$ | async)?.isAdmin">
+                Admin
+            </button>
             <button mat-button class="fs-5" (click)="handleLogout()">
                 Logout
             </button>
         </ng-template>
     </div>
     <div class="menu-navlinks">
-        <div *ngIf="!userAuthenticated; else protectedMenuNav">
+        <div *ngIf="(authUser$ | async); else protectedMenuNav">
             <button mat-icon-button [matMenuTriggerFor]="menu">
                 <mat-icon>menu</mat-icon>
             </button>

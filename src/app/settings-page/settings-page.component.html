@@ -1,0 +1,114 @@
+<div class="container-lg py-3">
+  <div class="row g-3">
+    <div class="col-12 col-md-3" style="min-width: 260px">
+      <app-profile-card></app-profile-card>
+    </div>
+    <div class="col-12 col-md">
+      <mat-card class="px-4 pt-4 mx-auto">
+        <mat-card-title>Update your information</mat-card-title>
+        <mat-card-content class="pt-3">
+          <form
+            id="updateForm"
+            [formGroup]="updateForm"
+            (ngSubmit)="handleFormSubmit()"
+          >
+            <mat-form-field appearance="outline">
+              <mat-label>First Name</mat-label>
+              <input matInput formControlName="firstName" />
+              <mat-error *ngIf="firstName.hasError('required')"
+                >Please enter first name</mat-error
+              >
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Last Name</mat-label>
+              <input matInput formControlName="lastName" />
+              <mat-error *ngIf="lastName.hasError('required')"
+                >Please enter last name</mat-error
+              >
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Email</mat-label>
+              <input matInput formControlName="email"/>
+              <mat-error *ngIf="email.hasError('required')"
+                >Please enter email</mat-error
+              >
+              <mat-error *ngIf="email.hasError('email')"
+                >Please enter a valid email</mat-error
+              >
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="mb-2">
+              <mat-label>Date of birth</mat-label>
+              <input
+                matInput
+                [matDatepicker]="picker"
+                formControlName="dob"
+                [max]="currentDate"
+              />
+              <mat-hint>MM/DD/YYYY</mat-hint>
+              <mat-datepicker-toggle
+                matSuffix
+                [for]="picker"
+              ></mat-datepicker-toggle>
+              <mat-datepicker #picker startView="year" touchUi></mat-datepicker>
+              <mat-error *ngIf="dob.hasError('required')"
+                >Please enter date of birth</mat-error
+              >
+              <mat-error *ngIf="dob.hasError('matDatepickerMax')"
+                >Please enter a valid date of birth
+              </mat-error>
+            </mat-form-field>
+            <div class="mb-2">
+              Gender:&nbsp;
+              <mat-button-toggle-group formControlName="gender">
+                <mat-button-toggle value="male">Male</mat-button-toggle>
+                <mat-button-toggle value="female">Female</mat-button-toggle>
+                <mat-button-toggle value="other">Other</mat-button-toggle>
+                <mat-button-toggle value="secret"
+                  >Prefer not to say</mat-button-toggle
+                >
+              </mat-button-toggle-group>
+            </div>
+            <mat-form-field appearance="outline">
+                <mat-label>Phone</mat-label>
+                <input matInput formControlName="phone" />
+                <mat-error *ngIf="phone.hasError('pattern')"
+                  >Please enter valid phone number</mat-error
+                >
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>City</mat-label>
+                <input matInput formControlName="city" />
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>State</mat-label>
+                <input matInput formControlName="state" />
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Country</mat-label>
+                <input matInput formControlName="country" />
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Pincode</mat-label>
+                <input matInput formControlName="pincode" />
+                <mat-error *ngIf="phone.hasError('pattern')"
+                  >Please enter valid pincode</mat-error
+                >
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Profession</mat-label>
+                <input matInput formControlName="profession" />
+              </mat-form-field>
+          </form>
+        </mat-card-content>
+        <mat-card-actions align="end" class="mb-0">
+          <button mat-button class="w-100" type="submit" form="updateForm" [disabled]="updateForm.pristine">
+            UPDATE
+          </button>
+        </mat-card-actions>
+        <mat-card-footer *ngIf="updateResponsePending">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        </mat-card-footer>
+      </mat-card>
+    </div>
+  </div>
+</div>

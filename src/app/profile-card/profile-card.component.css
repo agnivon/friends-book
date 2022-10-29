@@ -1,3 +1,36 @@
+.profile-photo-container {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.upload-profile-photo {
+    width: 150px;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    opacity: 0;
+    z-index: 2;
+}
+
+.photo-input {
+    display: none;
+}
+
+.upload-profile-photo:hover {
+    opacity: 100;
+    background-color: rgba(0, 0, 0, .8);
+    color: white;
+    transition: background-color .2s ease-in-out;
+}
+
 .profile-photo {
     overflow: hidden;
+    width: 150px;
+    height: 150px;
+    z-index: 1;
 }

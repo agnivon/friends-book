@@ -25,13 +25,14 @@ export interface NewPost {
 }
 
 export interface UpdatedPost {
-    post: string
+    post?: string
     userId?: string
-    userName: string
+    userName?: string
     userPhotoId?: string
-    postImageId: string
+    postImageId?: string
     isAdmin?: boolean
-    profession: string
+    isActive?: boolean
+    profession?: string
 }
 
 export interface DisplayPost extends Post {

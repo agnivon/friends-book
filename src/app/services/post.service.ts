@@ -52,9 +52,11 @@ export class PostService {
     return of(null);
   } */
 
-  updateManyPostsByUserId(userId: string, body: object) {
+  updateManyPostsByUserId(userId: string, photoId: string) {
     const url = `${this.baseApiUrl}/posts/updatemanyposts`;
-    return this.http.post<object>(url, body);
+    return this.http.post<object>(url, {
+      userId, photoId
+    });
   }
 
   updatePostById(postId: string, post: UpdatedPost) {

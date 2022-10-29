@@ -17,8 +17,7 @@ import { UserService } from './user.service';
 export class Auth2Service {
 
   private baseApiUrl = `https://nodejs-fb-app.herokuapp.com`;
-  private authUser = this.store.select(AuthSelectors.selectAuthUser);
-  private authToken = this.store.select(AuthSelectors.selectAuthToken);
+  private authTokenValidityDuration = 300 * 1000;
 
   constructor(private http: HttpClient, private store: Store, private alertService: AlertService, private userService: UserService) { }
 
@@ -58,7 +57,7 @@ export class Auth2Service {
         const { authUser, authToken, lastAuthTime } = authState;
         const timeElapsedSinceLastAuth = lastAuthTime ? Date.now() - lastAuthTime : null;
         if (authUser && authToken) {
-          if (timeElapsedSinceLastAuth === null || timeElapsedSinceLastAuth > 300) {
+          if (timeElapsedSinceLastAuth === null || timeElapsedSinceLastAuth > this.authTokenValidityDuration) {
             return this.checkTokenValidity(authUser?._id, authToken).pipe(tap(isA => {
               if (isA) this.store.dispatch(AuthActions.setLastAuthTime());
               else {

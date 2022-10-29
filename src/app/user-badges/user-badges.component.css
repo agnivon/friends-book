@@ -1,0 +1,14 @@
+.role-badge {
+    margin-left: 7px;
+    background-image: linear-gradient(to top, #b224ef 0%, #7579ff 100%);
+}
+
+.friend-badge {
+    margin-left: 7px;
+    background-image: linear-gradient(-20deg, #b721ff 0%, #21d4fd 100%);
+}
+
+.status-badge {
+    margin-left: 7px;
+    background-image: linear-gradient(to top, #ff0844 0%, #ffb199 100%);
+}

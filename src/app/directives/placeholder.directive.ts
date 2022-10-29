@@ -11,10 +11,11 @@ export class PlaceholderDirective {
   }
 
   ngOnChanges() {
-    // console.log(this.el, this.appLoading);
+    //console.log(this.el, this.appLoading);
     if (this.appLoading === '' ||
       this.appLoading === null ||
       this.appLoading === undefined ||
+      /* this.appLoading.length === 0 || */
       this.appLoading === true) {
       this.el.nativeElement.classList.add('placeholder');
     } else {

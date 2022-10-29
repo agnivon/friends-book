@@ -6,6 +6,6 @@
     overflow: hidden;
 }
 
-.user-badge {
-    background-image: linear-gradient(to top, #b224ef 0%, #7579ff 100%);
+.hidden-post {
+    filter: brightness(50%);
 }

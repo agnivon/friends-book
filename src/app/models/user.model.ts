@@ -1,4 +1,5 @@
 import { SafeUrl } from "@angular/platform-browser"
+import { Observable } from "rxjs"
 
 export interface User {
     isAdmin: boolean
@@ -20,8 +21,25 @@ export interface User {
     profession?: string
 }
 
+export interface UpdatedUser {
+    isActive?: boolean
+    firstName?: string
+    lastName?: string
+    email?: string
+    dob?: string
+    gender?: string
+    photoId?: string
+    createdDate?: string
+    phone?: string
+    city?: string
+    state?: string
+    country?: string
+    pincode?: string
+    profession?: string
+}
+
 export interface DisplayUser extends User {
-    photoUrl?: SafeUrl | string
+    photoUrl?: Observable<SafeUrl>
     friendRequestStatus?: number
 }
 

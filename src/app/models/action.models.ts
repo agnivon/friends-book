@@ -1,0 +1,1 @@
+export type ActionMessage = { actionMessage?: string };

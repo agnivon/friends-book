@@ -49,6 +49,17 @@ export class PostEffects {
         ))
     ));
 
+    updateManyPoststByUserId$ = createEffect(() => this.actions$.pipe(
+        ofType(PostActions.updateManyPostsByUserId),
+        mergeMap(action => this.postService.updateManyPostsByUserId(action.userId, action.photoId).pipe(
+            map((response) => {
+                this.alertService.createAlert("Posts successfully updated");
+                return PostActions.getPosts();
+            }),
+            catchError(err => this.handleError(err))
+        ))
+    ));
+
     deletePostById$ = createEffect(() => this.actions$.pipe(
         ofType(PostActions.deletePostById),
         mergeMap((action) => this.postService.deletePostById(action.postId).pipe(

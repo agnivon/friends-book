@@ -1,24 +1,44 @@
-<div class="row g-3 post-list-container" *ngIf="users?.length; else loading">
-    <div *ngFor="let dUser of displayUsers" class="col-12">
-        <mat-card class="user-card pt-4 placeholder-glow">
-            <mat-card-title-group>
-                <mat-card-title>{{dUser.firstName + ' ' + dUser.lastName}}</mat-card-title>
-                <mat-card-subtitle>{{dUser.email}}</mat-card-subtitle>
-                <img mat-card-lg-image [src]="dUser.photoUrl" class="rounded-circle border border-2 overflow-hidden"
-                    [appLoading]="!dUser.photoUrl">
-            </mat-card-title-group>
-            <!-- <mat-card-content>
+<div class="row g-3 user-list-container" *ngIf="displayUsers?.length; else loading">
+  <div *ngFor="let dUser of displayUsers" class="col-12">
+    <mat-card class="user-card pt-4 placeholder-glow" *ngIf="dUser.id != (authUser$ | async)?._id">
+      <mat-card-title-group>
+        <mat-card-title class="d-flex align-items-center">{{
+          dUser.firstName + " " + dUser.lastName
+          }}
+          <app-user-badges [isAdmin]="dUser.isAdmin" [isFriend]="dUser.friendRequestStatus === 3" [isActive]="dUser.isActive"></app-user-badges>
+        </mat-card-title>
+        <mat-card-subtitle>{{ dUser.email }}</mat-card-subtitle>
+        <img mat-card-lg-image [src]="dUser.photoUrl | async" class="rounded-circle border border-2 overflow-hidden"
+          [appLoading]="dUser.photoId != '' && (dUser.photoUrl | async)" />
+      </mat-card-title-group>
+      <!-- <mat-card-content>
                 Hello
             </mat-card-content> -->
-            <mat-card-actions>
-                <button mat-button class="w-100" *ngIf="dUser.friendRequestStatus === 0" (click)="handleSendFriendRequest(dUser.id)">SEND FRIEND REQUEST</button>
-                <button mat-button class="w-100" *ngIf="dUser.friendRequestStatus === 1" disabled>FRIEND REQUEST SENT</button>
-                <button mat-button class="w-100" *ngIf="dUser.friendRequestStatus === 2" (click)="handleAcceptFriendRequest(dUser.id)">ACCEPT FRIEND REQUEST</button>
-                <button mat-button class="w-100" *ngIf="dUser.friendRequestStatus === 3" disabled>FRIENDS</button>
-            </mat-card-actions>
-        </mat-card>
-    </div>
+      <mat-card-actions class="d-flex">
+        <button mat-button *ngIf="dUser.friendRequestStatus === 0" (click)="handleSendFriendRequest(dUser.id)">
+          SEND FRIEND REQUEST
+        </button>
+        <button mat-button *ngIf="dUser.friendRequestStatus === 1" disabled>
+          FRIEND REQUEST SENT
+        </button>
+        <button mat-button *ngIf="dUser.friendRequestStatus === 2" (click)="handleAcceptFriendRequest(dUser.id)">
+          ACCEPT FRIEND REQUEST
+        </button>
+        <button mat-button *ngIf="dUser.friendRequestStatus === 3" disabled>
+          FRIENDS
+        </button>
+        <div *ngIf="(authUser$ | async)?.isAdmin">
+          <button mat-button *ngIf="dUser.isActive; else unblock" (click)="handleUpdateUserStatus(dUser.id, true)">
+            BLOCK USER
+          </button>
+          <ng-template #unblock>
+            <button mat-button (click)="handleUpdateUserStatus(dUser.id, false)">UNBLOCK USER</button>
+          </ng-template>
+        </div>
+      </mat-card-actions>
+    </mat-card>
+  </div>
 </div>
 <ng-template #loading>
-    <mat-spinner class="mx-auto"></mat-spinner>
+  <mat-spinner class="mx-auto"></mat-spinner>
 </ng-template>

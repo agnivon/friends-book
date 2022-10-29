@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { Post } from '../models/post.model';
-import { FriendRequest, User } from '../models/user.model';
+import { Store } from '@ngrx/store';
 import { AuthService } from '../services/auth.service';
 import { PostService } from '../services/post.service';
 import { UserService } from '../services/user.service';
+import { getPosts } from '../state/post/post.actions';
+import { getFriendRequests, getUsers } from '../state/user/user.actions';
 
 @Component({
   selector: 'app-network-page',
@@ -12,14 +13,14 @@ import { UserService } from '../services/user.service';
 })
 export class NetworkPageComponent implements OnInit {
 
-  user: User | null | undefined;
+  /* user: User | null | undefined;
   users: User[] | null | undefined;
   friendRequests: FriendRequest[] | null | undefined;
-  userPosts: Post[] | null | undefined;
+  userPosts: Post[] | null | undefined; */
 
-  constructor(private userService: UserService, private auth: AuthService, private postService: PostService) { }
+  constructor(private userService: UserService, private auth: AuthService, private postService: PostService, private store: Store) { }
 
-  getUser() {
+  /* getUser() {
     const userId = this.auth.getAuthenticatedUserId();
     this.userService.getUserById(userId).subscribe((user: User | null) => {
       if (user) {
@@ -28,36 +29,36 @@ export class NetworkPageComponent implements OnInit {
         //console.log(user);
       }
     });
-  }
+  } */
 
-  getUsers() {
+  /* getUsers() {
     this.userService.getUsers().subscribe((users: User[] | null) => {
       if(users) {
         this.users = users;
       }
     });
-  }
+  } */
 
-  getFriendRequests() {
+  /* getFriendRequests() {
     this.userService.getFriendRequests().subscribe((requests: FriendRequest[] | null) => {
       if (requests) {
         this.friendRequests = requests;
       }
     });
-  }
+  } */
 
-  getUserPosts() {
+  /* getUserPosts() {
     this.postService.getPostsByUserId(this.user!.id).subscribe((posts: Post[] | null) => {
       if (posts) {
         this.userPosts = posts;
       }
     });
-  }
+  } */
 
   ngOnInit(): void {
-    this.getUser();
-    this.getUsers();
-    this.getFriendRequests();
+    this.store.dispatch(getPosts());
+    this.store.dispatch(getFriendRequests());
+    this.store.dispatch(getUsers());
   }
 
 }

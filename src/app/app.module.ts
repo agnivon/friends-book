@@ -46,7 +46,7 @@ import { FileEffects } from './state/file/file.effects';
       FileEffects
     ]),
     StoreDevtoolsModule.instrument({
-      maxAge: 1000,
+      maxAge: 100,
       logOnly: environment.production
     })
   ],

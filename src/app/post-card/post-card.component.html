@@ -1,4 +1,4 @@
-<mat-card class="d-flex flex-column placeholder-glow" *ngIf="post">
+<mat-card class="d-flex flex-column placeholder-glow" *ngIf="post" [class.hidden-post]="!post.isActive">
     <mat-card-header>
         <div mat-card-avatar>
             <img height="40" width="40" [src]="(post.userPhotoUrl | async ) || getPlaceholder(40)"
@@ -7,14 +7,27 @@
         <mat-card-title [appLoading]="!post.userName">
             {{post.userName}}
         </mat-card-title>
-        <mat-card-subtitle [appLoading]="!post.profession">{{post.profession}}
-            <span class="badge rounded-pill user-badge text-light">{{post.isAdmin ? 'Admin' : 'User' }}</span>
+        <mat-card-subtitle [appLoading]="!post.profession" class="d-flex align-items-center">
+            {{post.profession}}
+            <app-user-badges [isAdmin]="(postUser$ | async)?.isAdmin" [isActive]="(postUser$ | async)?.isActive">
+            </app-user-badges>
         </mat-card-subtitle>
         <div style="flex: 1 1 auto;"></div>
-        <button mat-icon-button [matMenuTriggerFor]="menu" class="float-end" *ngIf="(user$ | async)?._id === post.userId">
+        <button mat-icon-button [matMenuTriggerFor]="menu" class="float-end"
+            *ngIf="(authUser$ | async)?._id === post.userId">
             <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="handleTogglePostVisibility(post.id)">
+                <div *ngIf="post.isActive; else showPost">
+                    <mat-icon>disabled_visible</mat-icon>
+                    <span>Hide Post</span>
+                </div>
+                <ng-template #showPost>
+                    <mat-icon>visibility</mat-icon>
+                    <span>Show Post</span>
+                </ng-template>
+            </button>
             <button mat-menu-item (click)="handleUpdatePost(post.id)">
                 <mat-icon>post_add</mat-icon>
                 <span>Update Post</span>
@@ -25,7 +38,8 @@
             </button>
         </mat-menu>
     </mat-card-header>
-    <img mat-card-image [src]="(post.postImageUrl | async)" [appLoading]="post.postImageId !== '' && (post.postImageUrl | async)" *ngIf="post.postImageId">
+    <img mat-card-image [src]="(post.postImageUrl | async)"
+        [appLoading]="post.postImageId !== '' && (post.postImageUrl | async)" *ngIf="post.postImageId">
     <mat-card-content class="flex-grow-1">
         <p>{{post.post}}</p>
     </mat-card-content>

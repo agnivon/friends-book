@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroupDirective, NgForm, Validators } from '@angular/forms';
 import { DateAdapter, ErrorStateMatcher, MAT_DATE_FORMATS, MAT_DATE_LOCALE, NativeDateAdapter } from '@angular/material/core';
 import { confirmPasswordMatchValidator } from '../directives/confirm-password-match.directive';
-import { UserLoginCredentials, UserRegistrationData } from '../models/auth.model';
 import { AlertService } from '../services/alert.service';
 import { AuthService } from '../services/auth.service';
 

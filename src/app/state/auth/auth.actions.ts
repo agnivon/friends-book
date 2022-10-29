@@ -1,11 +1,18 @@
 import { createAction, props } from "@ngrx/store";
+import { ActionMessage } from "src/app/models/action.models";
+import { UpdatedUser } from "src/app/models/user.model";
 import { AlertMessageType } from "../../models/alert.model";
 import { AuthUser, UserLoginCredentials, UserRegistrationData } from "../../models/auth.model";
 
 export const storeAuthUser = createAction(
     '[Auth] Store Auth User',
-    props<{ authUser: AuthUser, authToken: string, lastAuthTime?: number, hydrated?: boolean }>()
+    props<{ authUser: AuthUser, authToken?: string, lastAuthTime?: number, hydrated?: boolean }>()
 );
+
+export const updateStoredAuthUser = createAction(
+    '[Auth] Update Stored Auth User',
+    props<{ updatedAuthUser: UpdatedUser} & ActionMessage>()
+)
 
 export const setLastAuthTime = createAction(
     '[Auth] Set Last Auth Time'

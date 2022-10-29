@@ -1,12 +1,16 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
 import { DisplayPost, Post } from '../models/post.model';
+import { User } from '../models/user.model';
 import { AlertService } from '../services/alert.service';
 import { PostService } from '../services/post.service';
 
 import { selectAuthUser } from '../state/auth/auth.selectors';
-import { deletePostById } from '../state/post/post.actions';
+import { deletePostById, updatePostById } from '../state/post/post.actions';
+import { selectPostByUserId } from '../state/post/post.selectors';
+import { selectUserById } from '../state/user/user.selectors';
 import { UpdatePostDialogComponent } from '../update-post-dialog/update-post-dialog.component';
 
 @Component({
@@ -17,23 +21,14 @@ import { UpdatePostDialogComponent } from '../update-post-dialog/update-post-dia
 export class PostCardComponent implements OnInit {
 
   @Input() post: DisplayPost | undefined;
-  user$ = this.store.select(selectAuthUser);
-  /* @Output() postsUpdated = new EventEmitter(); */
+  authUser$ = this.store.select(selectAuthUser);
+  postUser$: Observable<User | undefined> | undefined;
 
   constructor(private postService: PostService, private alertService: AlertService, private store: Store, public dialog: MatDialog,) { }
 
   getPlaceholder(dimensions: number) {
     return `https://via.placeholder.com/${dimensions}`;
   }
-
-  /* handleDeletePost(postId: string) {
-    this.postService.deletePostById(postId).subscribe((deleted: any | null) => {
-      if(deleted != null) {
-        this.alertService.createAlert("Post successfully deleted");
-        this.postsUpdated.emit();
-      }
-    })
-  } */
 
   handleUpdatePost(postId: string) {
     const dialogRef = this.dialog.open(UpdatePostDialogComponent, {
@@ -52,7 +47,14 @@ export class PostCardComponent implements OnInit {
     this.store.dispatch(deletePostById({ postId }));
   }
 
+  handleTogglePostVisibility(postId: string) {
+    this.store.dispatch(updatePostById({ postId, updatedPost: { isActive: !this.post?.isActive } }))
+  }
+
   ngOnInit(): void {
+    if (this.post) {
+      this.postUser$ = this.store.select(selectUserById(this.post.userId));
+    }
   }
 
 }
