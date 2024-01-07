@@ -10,7 +10,7 @@ import { AlertService } from './alert.service';
 })
 export class PostService {
 
-  baseApiUrl = `https://nodejs-fb-app.herokuapp.com`;
+  baseApiUrl = `http://3.17.216.66:3000`;
 
   constructor(private http: HttpClient, private alertService: AlertService, private router: Router) { }
 

@@ -16,7 +16,7 @@ import { UserService } from './user.service';
 })
 export class Auth2Service {
 
-  private baseApiUrl = `https://nodejs-fb-app.herokuapp.com`;
+  private baseApiUrl = `http://3.17.216.66:3000`;
   private authTokenValidityDuration = 300 * 1000;
 
   constructor(private http: HttpClient, private store: Store, private alertService: AlertService, private userService: UserService) { }

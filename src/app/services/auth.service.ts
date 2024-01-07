@@ -15,7 +15,7 @@ import * as AuthActions from '../state/auth/auth.actions';
 })
 export class AuthService {
 
-  private baseApiUrl = `https://nodejs-fb-app.herokuapp.com`;
+  private baseApiUrl = `http://3.17.216.66:3000`;
   private authenticatedUser: AuthUser | User | null;
   private authenticationToken: string | null;
   private lastAuthTime: number | null = null;

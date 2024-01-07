@@ -11,7 +11,7 @@ import { AlertService } from './alert.service';
 })
 export class FileService {
 
-  baseApiUrl = `https://nodejs-fb-app.herokuapp.com`;
+  baseApiUrl = `http://3.17.216.66:3000`;
   fetchedFiles: FileIdBlobMap = {}
 
   constructor(private http: HttpClient, private alertService: AlertService, private sanitizer: DomSanitizer, private router: Router) { }
