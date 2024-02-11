@@ -1,4 +1,4 @@
-# Problem Statement: Build an online friends book web application using Angular.
+# Building an online Facebook-like web application using Angular.
 
 ## Background: 
 Friends Book is a popular social networking web application that allows registered users to connect with friends. Users can send requests, write posts, and share pictures among friends. This web application is a regular stop for millions of users. Since it is designed using traditional web development methodologies, navigating to a different page of the application resulted in reloading the entire page. With the increase in web traffic, the website load time increased significantly, which in turn impacted the speed and performance of the website. Also, the website could not adapt to different resolutions and device screens. All these challenges led to an unsatisfied user experience. So, the company decided to upgrade their website using the Angular Framework to focus on building a responsive and customer-oriented single-page web application.
